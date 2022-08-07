@@ -33,10 +33,10 @@ const exampleMovies = require("./movies");
  */
 function getAllMovieTitles(movies) {
   if (movies.length === 0) {
-    return "ERROR";
+    throw "ERROR";
   }
 
-  movies.map((movie) => movie.name);
+  return movies.map((movie) => movie.title);
 }
 
 /**
@@ -57,12 +57,12 @@ function getAllMovieTitles(movies) {
  *  checkIfAnyMovieHasRating(movies, "R");
  *  //> false
  */
-function checkIfAnyMovieHasRating(movie, rating) {
+function checkIfAnyMovieHasRating(movies, rating = "G") {
   if (movies.length === 0) {
     throw "ERROR";
   }
 
-  return movies.some((movie) => movie.rating === rating);
+  return movies.some((movie) => movie.rated === rating);
 }
 
 /**
@@ -86,8 +86,8 @@ function findById(movies, id) {
     throw "ERROR";
   }
 
-  return movies.filter((movie) => movie.imdbID === id) || null;
-
+  return movies.find((movie) => movie.imdbID === id) || null;
+}
 
 /**
  * filterByGenre()
@@ -117,7 +117,7 @@ function filterByGenre(movies, genre) {
   }
 
   return movies.filter((movie) =>
-    movie.genres.toLowerCase.includes(genre.toLowerCase)
+    movie.genre.toLowerCase().includes(genre.toLowerCase())
   );
 }
 
@@ -148,7 +148,9 @@ function filterByGenre(movies, genre) {
 function getAllMoviesReleasedAtOrBeforeYear(movies, year) {
   if (movies.length === 0) throw "ERROR";
 
-  return movies.find((movie) => movie.released.slice(4) <= year);
+  return (
+    movies.filter((movie) => movie["released"].split(" ")[2] <= year) || []
+  );
 }
 
 /**
@@ -169,7 +171,7 @@ function checkMinMetascores(movies, score) {
   if (movies.length === 0) {
     throw "ERROR";
   }
-  return movies.every((movie) => movie.score >= metascore);
+  return movies.every((movie) => movie.metascore >= score);
 }
 
 /**
@@ -203,7 +205,7 @@ function getRottenTomatoesScoreByMovie(movies) {
 
   return movies.map((movie) => {
     return {
-      movie.title: movie.ratings.find(
+      [movie.title]: movie.ratings.find(
         (score) => score.source === "Rotten Tomatoes"
       ).value,
     };
